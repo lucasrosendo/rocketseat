@@ -5,6 +5,8 @@ import bugImageUrl from "../../images/bug.svg";
 import ideaImageUrl from "../../images/idea.svg";
 import thoughtImageUrl from "../../images/thought.svg";
 import { FeedbackTypeStep } from './Steps/FeedbackTypeStep';
+import { FeedbackContentStep } from './Steps/FeedbackContentStep';
+import { FeedbackSuccessStep } from './Steps/FeedbackSuccessStep';
 
 export const feedBackTypes = {
   BUG:{
@@ -34,16 +36,29 @@ export type FeedbackType = keyof typeof feedBackTypes;
 
 export function WidgetForm(){
   const [feedbackType, setFeedbackType] = useState<FeedbackType | null>(null)
+  const [feedbackSent, setFeedbackSent] = useState(false);
+
+  function handleRestartFeedback(){
+    setFeedbackSent(false);
+    setFeedbackType(null);
+  }
+
   return (
-    <div className="bg-zinc-900 p-4 relative rounded-2xl mb-4 flex flex-col items-center shadow-lg w-[calc(100vw-2rem)] md:w-auto">      
-      <header>
-        <span className="text-xl leading-6"> Deixe seu feedback</span>
-        <CloseButton />
-      </header>      
-      {!feedbackType ? (
+    <div className="bg-zinc-900 p-4 relative rounded-2xl mb-4 flex flex-col items-center shadow-lg w-[calc(100vw-2rem)] md:w-auto"> 
+      { feedbackSent ? (
+       <FeedbackSuccessStep onFeedbackRestartRequested={handleRestartFeedback}/>
+       ) : (
+        <>
+          {!feedbackType ? (
         <FeedbackTypeStep onFeedbackTypeChange={setFeedbackType} />
       ) : (
-        <p>Hello world!</p>
+        <FeedbackContentStep
+        feedbackType={feedbackType}
+        onFeedbackRestartRequested={handleRestartFeedback}
+        onFeedbackSent={() => setFeedbackSent(true)}
+        />
+      )}
+        </>
       )}
       <footer>
         Feito por <a className="underline underline-offset-2" href="http://github.com/lucasrosendo">Lucas Rosendo</a>
